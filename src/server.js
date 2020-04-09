@@ -35,6 +35,10 @@
             // io.sockets.emit('client_info',socket.server.engine.clientsCount)
             
         })
+        socket.on('typing',function(data)
+        {
+           socket.broadcast.emit('typing',data)
+        })
     })
 
     

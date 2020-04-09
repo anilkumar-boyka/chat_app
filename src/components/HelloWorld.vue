@@ -1,12 +1,11 @@
 <template>
   <div class="hello">
-    
-    
-      <h2><b-badge>Chat Room</b-badge></h2>
+    <h2><b-badge>Chat Room</b-badge></h2>
       <div class="chat">
        <i class="fas fa-circle"></i><span class="active_users"> Number of Active Connections : {{active_clients}}</span> 
         <hr>
         <b-container> 
+          <span class=typing_info>{{user_typing}}</span>
           <div class="message_info" v-if="">
             <!-- <span class="name">Anil</span>
             <span class="message"> hello</span><br><br>
@@ -16,6 +15,7 @@
               <li v-for="recieved_message in recieved_messages">
                 <span class="name">{{recieved_message.name}} </span>
                 <span class="message"> {{recieved_message.message}}</span>
+                <span class="time">{{recieved_message.time}}</span>
               </li>
             </ul>
           </div>
@@ -33,6 +33,7 @@
             v-if="show_input_msg_field"
             id="input-1"
             v-model ="text_message"
+            v-on:keydown="key_press"
             type="text"
             required
             placeholder="Enter your message"
@@ -64,7 +65,10 @@ export default {
       show_input_msg_field : 0,
       show_proceed_button : 1,
       show_input_name_field : 1,
-      show_messages : 0
+      show_messages : 0,
+      current_time : '',
+      typing_name : '',
+      user_typing : ''
     }
   },
   mounted(){
@@ -79,6 +83,7 @@ export default {
       console.log(data)
     },
     chat_message : function (data){
+      this.user_typing = '';
       console.log('data is...')
       console.log(data)
       // console.log(data.message)
@@ -96,26 +101,59 @@ export default {
       // console.log(data);
       this.recieved_name = data;
       // console.log(this.recieved_name)
+    },
+    typing : function (data) {
+      console.log('typing name')
+      console.log(data)
+      this.typing_name = data;
+      this.user_typing = this.typing_name+' is typing....'
+      console.log(this.user_typing)
     }
   },
   methods: {
         send: function (data) {
             // $socket is socket.io-client instance
-            this.$socket.emit('chat_message', {
-              message : this.text_message,
-              name : this.name
-              
-            })
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var dateTime = date+' '+time;
+            this.current_time = dateTime;
+            if(this.text_message)
+            {
+                this.$socket.emit('chat_message', {
+                  message : this.text_message,
+                  name : this.name,
+                  time : this.current_time,
+                  
+                })
+            }
+            else{
+              alert("Message cannot be an empty string")
+            }
             this.text_message = '';
+            
+            console.log("who is tping")
+            console.log("me"+this.user_typing)
         },
         chat_room : function () {
-          this.$socket.emit('chat_name', {
-              name : this.name
-              })
-          this.show_proceed_button =!this.show_proceed_button;
-          this.show_input_msg_field =!this.show_input_msg_field;
-          this.show_input_name_field = !this.show_input_name_field;
-          this.show_messages = !this.show_messages;
+          if(this.name){          
+              this.$socket.emit('chat_name', {
+                  name : this.name
+                  })
+                this.show_proceed_button =!this.show_proceed_button;
+                this.show_input_msg_field =!this.show_input_msg_field;
+                this.show_input_name_field = !this.show_input_name_field;
+                this.show_messages = !this.show_messages;   
+          }
+          else{
+            alert("Name input cannot be an empty string")
+          }
+          
+        },
+        key_press : function (event) {
+          // console.log(event)
+          // console.log(this.name)
+          this.$socket.emit('typing',this.name)
         }
     }
 }
@@ -157,6 +195,20 @@ li{
 }
 ul {
   list-style-type: none;
+ }
+ .time {
+   font-size: 12px;
+   font-family: 'Noto Sans', sans-serif;
+   font-weight: bold;
+   opacity: 0.5;
+ }
+ .typing_info{
+   font-style: italic;
+   color : grey;
+   font-family: 'Noto Sans', sans-serif;
+   text-align: right;
+   display:block;
+   margin:0 20px 0 20px;
  }
 /* .chat{
   min-height: 300px;
