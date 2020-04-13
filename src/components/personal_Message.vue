@@ -9,12 +9,12 @@
               <span class="active_users"> Number of Active Connections : {{active_clients}}</span>
              </span> 
           </b-col>
-          <b-col>
-            <span class="online_userName" v-on:click="send_personal_msg()">Click here to Send Personal Message</span>
-          </b-col>
           <!-- <b-col>
-            <span class="online_userName">Click here to Send Personal Message to :</span>
-            <span class="dropbtn"><i class="fas fa-caret-down fa-2x	"></i>
+              <span class="online_userName" v-on:click=send_personal_msg()>Click here to Send Personal Message</span>
+          </b-col> -->
+          <b-col>
+            <span class="online_userName" v-if="show_name_list"> Send Personal Message to :</span>
+            <span class="dropbtn"><i v-if="show_name_list" class="fas fa-caret-down fa-2x	"></i>
               <span class="dropdown-content">
                 <ul>
                   <li v-for="online_user in online_users">
@@ -25,11 +25,15 @@
                 </ul>
               </span>
               </span>
-          </b-col> -->
+          </b-col>
         </b-row><hr>
        <b-container> 
           <span class=typing_info>{{user_typing}}</span>
           <div class="message_info" v-if="">
+            <!-- <span class="name">Anil</span>
+            <span class="message"> hello</span><br><br>
+            <span class="name"> abc</span>
+            <span class="message"> hello world</span>{{recieved_messages}} -->
             <ul>
               <li v-for="recieved_message in recieved_messages">
                 <span class="name">{{recieved_message.name}} </span>
@@ -60,7 +64,7 @@
           </b-form-input>
           </b-form>
           <b-button v-if="show_input_msg_field" v-on:click="send()"  block variant="primary">send</b-button>
-          <b-button v-if="show_proceed_button" v-on:click="chat_room()"  block variant="primary">Enter Chat Room</b-button>
+          <b-button v-if="show_proceed_button" v-on:click="chat_room()"  block variant="primary">Proceed</b-button>
         </b-container>
       </div>
       <!-- <div class="footer">send o</div> -->
@@ -89,7 +93,8 @@ export default {
       typing_name : '',
       user_typing : '',
       online_users : [],
-      current_socketid : ''
+      current_socketid : '',
+      show_name_list : 0
     }
   },
   mounted(){
@@ -183,6 +188,7 @@ export default {
                 this.show_input_msg_field =!this.show_input_msg_field;
                 this.show_input_name_field = !this.show_input_name_field;
                 this.show_messages = !this.show_messages;   
+                this.show_name_list = !this.show_name_list;
           }
           else{
             alert("Name input cannot be an empty string")
@@ -194,12 +200,12 @@ export default {
           // console.log(this.name)
           this.$socket.emit('typing',this.name)
         },
-        send_personal_msg : function (event) {
-          // console.log(event)
-          // console.log(event.srcElement.innerText)
-          alert(this.current_socketid)
-          // this.$socket.emit('join',this.current_socketid);
-          this.$router.push({name:'personal_Message'}); 
+        send_personal_msg : function () {
+        //   console.log(event)
+        //   console.log(event.srcElement.innerText)
+        //   alert(this.current_socketid)
+        //   this.$socket.emit('join',this.current_socketid);
+          this.$router.push({name:'personal_Message',params:{id:1}}); 
           // this.$socket.emit('join', {
           //   email:'ak123.com',
           // })

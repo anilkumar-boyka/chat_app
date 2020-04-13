@@ -22,11 +22,23 @@
     io.on('connection',function(socket){
         console.log("server socket connection made");
         console.log(socket.id)
-        console.log("client count is")
+         io.sockets.emit('socket_id',socket.id)
+         //socketId recieved from client
+         socket.on('join',function(data){
+             console.log('rcvd id is'+data)
+             socket.on('join', function (data) {    
+                socket.join(data);
+                io.sockets.in(data).emit('socketId', data);
+              });
+              
+            // io.sockets.to(data).emit( 'send_msg', 'hello' );
+         })
+        // socket.broadcast.to('RA_74RxSr8LGdQemAAAB').emit( 'send_msg', 'hello' );
+        // console.log("client count is")
         console.log(socket.server.engine.clientsCount)
         io.sockets.emit('client_info',socket.server.engine.clientsCount)
-        io.sockets.emit('socket_id',socket.id)
         socket.on('chat_name',function(data){
+            // console.log(data)
             io.sockets.emit('chat_name',data);
         })
         socket.on('chat_message',function(data){
@@ -39,6 +51,12 @@
         {
            socket.broadcast.emit('typing',data)
         })
+        // socket.on('online_userName',function(data)
+        // {
+        // console.log('user online data is')
+        // console.log(data)
+        //    socket.broadcast.emit('online_userName',data)
+        // })
     })
 
     
