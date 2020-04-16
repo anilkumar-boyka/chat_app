@@ -23,16 +23,27 @@
         console.log("server socket connection made");
         console.log(socket.id)
          io.sockets.emit('socket_id',socket.id)
-         //socketId recieved from client
-         socket.on('join',function(data){
-             console.log('rcvd id is'+data)
+         //personal_msg
+        //  socket.on('join',function(data){
+            //  console.log('rcvd id is'+data.username)
              socket.on('join', function (data) {    
-                socket.join(data);
-                io.sockets.in(data).emit('socketId', data);
+                // socket.join(data.username);
+                console.log("selected username is"+data.username)
+                io.to(data.username).emit('name_selected_for_personal_msg', data);
               });
-              
-            // io.sockets.to(data).emit( 'send_msg', 'hello' );
-         })
+            //   })
+
+              //personal_msg_received
+              socket.on('personal_message',function(data){
+                console.log('rcvd msg is'+data.message)
+                console.log("and socked is"+data.Socketid)
+                // socket.on('join', function (data) {    
+                //    socket.join(data.personal_msg_reciever);
+                   io.to(data.Socketid).emit('recieved_personal_msg', data);
+                //  });
+                });  
+
+
         // socket.broadcast.to('RA_74RxSr8LGdQemAAAB').emit( 'send_msg', 'hello' );
         // console.log("client count is")
         console.log(socket.server.engine.clientsCount)

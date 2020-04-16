@@ -5,11 +5,10 @@
         <b-row>
           <b-col>
             <span class="conections">
-              <!-- <i class="fas fa-circle"></i> -->
-              <span class="active_users"> Welcome {{name}}....</span>
+              <i class="fas fa-circle"></i>
+              <span class="active_users"> Number of Active Connections : {{active_clients}}</span>
              </span> 
           </b-col>
-          <!-- hello -->
           <!-- <b-col>
               <span class="online_userName" v-on:click=send_personal_msg()>Click here to Send Personal Message</span>
           </b-col> -->
@@ -18,10 +17,9 @@
             <span class="dropbtn"><i v-if="show_name_list" class="fas fa-caret-down fa-2x	"></i>
               <span class="dropdown-content">
                 <ul>
-                  <li v-for="online_user in online_users" v-if="online_user.name!=name">
-                    <b-button  v-on:click="send_personal_msg($event,online_user.socket_id)" class="nameList">
-                      <span :class={onlineUser:isTrue} >{{online_user.name}}</span>
-                      <!-- <span>{{online_user.socket_id}}</span> -->
+                  <li v-for="online_user in online_users">
+                    <b-button v-on:click="send_personal_msg($event)" class="nameList">
+                      <span >{{online_user}}</span>
                     </b-button>
                   </li>
                 </ul>
@@ -98,8 +96,6 @@ export default {
       current_socketid : '',
       show_name_list : 0,
       current_personal_msg_user : '',
-      isTrue : 0,
-      clicked_Socketid : ''
     }
   },
   mounted(){
@@ -118,10 +114,10 @@ export default {
     },
     recieved_personal_msg : function (data){
       this.user_typing = '';
-      // alert("hello rcvd msg")
-      console.log('rcvd data is...')
+      alert("hello rcvd msg")
+      // console.log('data is...')
       // console.log(data)
-      console.log(data.message)
+      // console.log(data.message)
       // console.log(data.name.name)
       this.recieved_messages.push(data);
       
@@ -132,10 +128,10 @@ export default {
       this.active_clients = data;
     },
     chat_name : function (data) {
-      console.log("rcvd name and socketid is")
-      console.log(data);
+      // console.log("rcvd name is")
+      // console.log(data);
       this.recieved_name = data;
-      this.online_users.push(data)
+      this.online_users.push(data.name)
       // console.log(this.online_users )
       // console.log(this.recieved_name)
     },
@@ -151,7 +147,7 @@ export default {
     //   console.log(data)
     // },
     name_selected_for_personal_msg : function (data) {
-      alert("hello")
+      alert("hello prsnl")
       console.log("hell personal msg")
       console.log(data.username)
     }
@@ -170,8 +166,7 @@ export default {
                   message : this.text_message,
                   name : this.name,
                   time : this.current_time,
-                  personal_msg_reciever : this.current_personal_msg_user,
-                  Socketid  : this.clicked_Socketid
+                  personal_msg_reciever : this.current_personal_msg_user
                   
                 })
             }
@@ -188,7 +183,6 @@ export default {
               //  this.online_users.push(this.name)       
               this.$socket.emit('chat_name', {
                   name : this.name,
-                  socket_id : this.current_socketid
                   //  online_users : this.online_users 
                   })
               // this.$socket.emit('online_userName', {
@@ -210,21 +204,15 @@ export default {
           // console.log(this.name)
           this.$socket.emit('typing',this.name)
         },
-        send_personal_msg : function (event,Socketid) {
-          this.clicked_Socketid = Socketid;
-          this.isTrue = 1;
+        send_personal_msg : function (event) {
           console.log(event)
-          console.log("socket id is"+Socketid)
-
-          // console.log(event.srcElement.innerText)
-          // var skt = JSON.parse(event.srcElement.innerText)
-          // console.log(skt.socket_id)
-          // this.current_personal_msg_user = event.srcElement.innerText;
+          console.log(event.srcElement.innerText)
+          this.current_personal_msg_user = event.srcElement.innerText;
         //   alert(this.current_socketid)
         //   this.$socket.emit('join',this.current_socketid);
           
           this.$socket.emit('join', {
-            username:Socketid ,
+            username:this.current_socketid,
           })
         }
     }
@@ -329,9 +317,6 @@ ul {
     font-family: 'Gotu', sans-serif;
     font-size: 20px;
     font-weight: bold;
-  }
-  .onlineUser{
-    background-color: chartreuse;
   }
  /* .dropbtn:hover {
    background-color: #3e8e41;

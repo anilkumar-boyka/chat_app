@@ -195,14 +195,14 @@ export default {
           this.$socket.emit('typing',this.name)
         },
         send_personal_msg : function (event) {
-          // console.log(event)
-          // console.log(event.srcElement.innerText)
-          alert(this.current_socketid)
-          // this.$socket.emit('join',this.current_socketid);
+        //   console.log(event)
+        //   console.log(event.srcElement.innerText)
+        //   alert(this.current_socketid)
+        //   this.$socket.emit('join',this.current_socketid);
           this.$router.push({name:'personal_Message'}); 
-          // this.$socket.emit('join', {
-          //   email:'ak123.com',
-          // })
+        //   this.$socket.emit('join', {
+        //     email:'ak123.com',
+        //   })
         }
     }
 }
