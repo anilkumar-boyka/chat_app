@@ -37,10 +37,10 @@
             <span class="name"> abc</span>
             <span class="message"> hello world</span>{{recieved_messages}} -->
             <ul>
-              <li v-for="recieved_message in recieved_messages">
-                <span class="name">{{recieved_message.name}} </span>
-                <span class="message"> {{recieved_message.message}}</span>
-                <span class="time">{{recieved_message.time}}</span>
+              <li v-for="personal_msg_recieved in personal_msgs_recieved">
+                <span class="name">{{personal_msg_recieved.names}} </span>
+                <span class="message"> {{personal_msg_recieved.msgs}}</span>
+                <span class="time">{{personal_msg_recieved.time}}</span>
               </li>
             </ul>
           </div>
@@ -70,6 +70,7 @@
         </b-container>
       </div>
       <!-- <div class="footer">send o</div> -->
+      <!-- hello -->
 
     
   </div>
@@ -99,7 +100,8 @@ export default {
       show_name_list : 0,
       current_personal_msg_user : '',
       isTrue : 0,
-      clicked_Socketid : ''
+      clicked_Socketid : '',
+      personal_msgs_recieved :[]
     }
   },
   mounted(){
@@ -120,7 +122,11 @@ export default {
       this.user_typing = '';
       // alert("hello rcvd msg")
       console.log('rcvd data is...')
-      // console.log(data)
+      console.log(data)
+      // this.personal_msgs_recieved.msg=data.message
+      this.personal_msgs_recieved.push({names : data.name,msgs :data.message,time : data.time})
+      // this.personal_msgs_recieved.names=data.name
+      // this.personal_msgs_recieved.time=data.time
       console.log(data.message)
       // console.log(data.name.name)
       this.recieved_messages.push(data);
@@ -158,12 +164,16 @@ export default {
   },
   methods: {
         send: function (data) {
+          // this.personal_msgs_recieved.msgs.push(this.text_message);
+          // this.personal_msgs_recieved.names.push(this.name)
             // $socket is socket.io-client instance
             var today = new Date();
             var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
             var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             var dateTime = date+' '+time;
             this.current_time = dateTime;
+          // this.personal_msgs_recieved.time.push(this.current_time)
+          this.personal_msgs_recieved.push({names : this.name,msgs :this.text_message,time :this.current_time})
             if(this.text_message)
             {     
                 this.$socket.emit('personal_message', {
@@ -219,7 +229,7 @@ export default {
           // console.log(event.srcElement.innerText)
           // var skt = JSON.parse(event.srcElement.innerText)
           // console.log(skt.socket_id)
-          // this.current_personal_msg_user = event.srcElement.innerText;
+          this.current_personal_msg_user = event.srcElement.innerText;
         //   alert(this.current_socketid)
         //   this.$socket.emit('join',this.current_socketid);
           
