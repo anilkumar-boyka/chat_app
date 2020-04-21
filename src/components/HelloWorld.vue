@@ -42,6 +42,7 @@
             <b-form-input
                 v-if="show_input_name_field"
                 v-model ="name"
+                v-on:keydown.enter="chat_room()"
                 id="input-1"
                 type="text"
                 required
@@ -52,6 +53,7 @@
             v-if="show_input_msg_field"
             id="input-1"
             v-model ="text_message"
+            v-on:keydown.enter="send()"
             v-on:keydown="key_press"
             type="text"
             required

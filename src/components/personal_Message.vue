@@ -20,7 +20,7 @@
                 <ul>
                   <li v-for="online_user in online_users" v-if="online_user.name!=name">
                     <b-button  v-on:click="send_personal_msg($event,online_user.socket_id)" class="nameList">
-                      <span :class={onlineUser:isTrue} >{{online_user.name}}</span>
+                      <span :class={onlineUser:isTrue}>{{online_user.name}}</span>
                       <!-- <span>{{online_user.socket_id}}</span> -->
                     </b-button>
                   </li>
@@ -48,6 +48,7 @@
             <b-form-input
                 v-if="show_input_name_field"
                 v-model ="name"
+                v-on:keydown.enter="chat_room()"
                 id="input-1"
                 type="text"
                 required
@@ -58,6 +59,7 @@
             v-if="show_input_msg_field"
             id="input-1"
             v-model ="text_message"
+            v-on:keydown.enter="send()"
             v-on:keydown="key_press"
             type="text"
             required
@@ -106,12 +108,13 @@ export default {
   },
   mounted(){
     console.log("hey mount hello");
+    this.current_socketid = this.$socket.id;
   },
   sockets : {
     connect : function () {
       console.log("both client and server connected to each other");
       console.log(this.$socket.id);
-      this.current_socketid = this.$socket.id;
+      // this.current_socketid = this.$socket.id;
     },
     socket_id : function (data) {
       // console.log("socket id is...")
@@ -224,7 +227,7 @@ export default {
           this.clicked_Socketid = Socketid;
           this.isTrue = 1;
           console.log(event)
-          console.log("socket id is"+Socketid)
+          console.log("socket id is"+this.clicked_Socketid)
 
           // console.log(event.srcElement.innerText)
           // var skt = JSON.parse(event.srcElement.innerText)
@@ -236,7 +239,7 @@ export default {
           this.$socket.emit('join', {
             username:Socketid ,
           })
-        }
+        },
     }
 }
 </script>
