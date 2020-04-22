@@ -59,10 +59,9 @@
             v-if="show_input_msg_field"
             id="input-1"
             v-model ="text_message"
-            v-on:keydown.enter="send()"
+            v-on:keydown.enter.prevent="send()"
             v-on:keydown="key_press"
             type="text"
-            required
             placeholder="Enter your message"
           >
           </b-form-input>
@@ -107,14 +106,15 @@ export default {
     }
   },
   mounted(){
-    console.log("hey mount hello");
+    console.log("hey mount hello personal component..");
     this.current_socketid = this.$socket.id;
+    console.log(this.current_socketid)
   },
   sockets : {
     connect : function () {
       console.log("both client and server connected to each other");
       console.log(this.$socket.id);
-      // this.current_socketid = this.$socket.id;
+      this.current_socketid = this.$socket.id;
     },
     socket_id : function (data) {
       // console.log("socket id is...")
@@ -145,13 +145,15 @@ export default {
       console.log(data);
       this.recieved_name = data;
       this.online_users.push(data)
+      console.log("name array..")
+      console.log(this.online_users )
       // console.log(this.online_users )
       // console.log(this.recieved_name)
     },
-    typing : function (data) {
+    who_is_typing : function (data) {
       // console.log('typing name')
       // console.log(data)
-      this.typing_name = data;
+      this.typing_name = data.name;
       this.user_typing = this.typing_name+' is typing....'
       console.log(this.user_typing)
     },
@@ -176,9 +178,10 @@ export default {
             var dateTime = date+' '+time;
             this.current_time = dateTime;
           // this.personal_msgs_recieved.time.push(this.current_time)
-          this.personal_msgs_recieved.push({names : this.name,msgs :this.text_message,time :this.current_time})
+          // this.personal_msgs_recieved.push({names : this.name,msgs :this.text_message,time :this.current_time})
             if(this.text_message)
-            {     
+            {   
+                this.personal_msgs_recieved.push({names : this.name,msgs :this.text_message,time :this.current_time})  
                 this.$socket.emit('personal_message', {
                   message : this.text_message,
                   name : this.name,
@@ -187,11 +190,13 @@ export default {
                   Socketid  : this.clicked_Socketid
                   
                 })
+                 this.text_message = '';
+                 this.user_typing ='';
             }
             else{
               alert("Message cannot be an empty string")
             }
-            this.text_message = '';
+           
             
             // console.log("who is tping")
             // console.log("me"+this.user_typing)
@@ -201,7 +206,7 @@ export default {
               //  this.online_users.push(this.name)       
               this.$socket.emit('chat_name', {
                   name : this.name,
-                  socket_id : this.current_socketid
+                  socket_id : this.current_socketid,
                   //  online_users : this.online_users 
                   })
               // this.$socket.emit('online_userName', {
@@ -219,9 +224,10 @@ export default {
           
         },
         key_press : function (event) {
-          // console.log(event)
-          // console.log(this.name)
-          this.$socket.emit('typing',this.name)
+          this.$socket.emit('who_is_typing',{
+            name:this.name,
+            socketid : this.clicked_Socketid
+            })
         },
         send_personal_msg : function (event,Socketid) {
           this.clicked_Socketid = Socketid;

@@ -62,12 +62,12 @@
         {
            socket.broadcast.emit('typing',data)
         })
-        // socket.on('online_userName',function(data)
-        // {
-        // console.log('user online data is')
-        // console.log(data)
-        //    socket.broadcast.emit('online_userName',data)
-        // })
+        // personal_message_typing
+        socket.on('who_is_typing',function(data)
+        {
+           io.to(data.socketid).emit('who_is_typing',data)
+        })
+
     })
 
     
