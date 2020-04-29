@@ -165,6 +165,18 @@ export default {
       alert("hello")
       console.log("hell personal msg")
       console.log(data.username)
+    },
+    connected_user : function () {
+      // console.log("yo man")
+      this.online_users =[];
+      if(this.name){
+       this.$socket.emit('chat_name', {
+                  name : this.name,
+                  socket_id : this.current_socketid,
+                  //  online_users : this.online_users 
+                  })
+      }
+     
     }
   },
   methods: {
@@ -213,6 +225,7 @@ export default {
               //     online_users : this.online_users
               //     })
                 this.show_proceed_button =!this.show_proceed_button;
+                console.log(this.show_proceed_button)
                 this.show_input_msg_field =!this.show_input_msg_field;
                 this.show_input_name_field = !this.show_input_name_field;
                 this.show_messages = !this.show_messages;   

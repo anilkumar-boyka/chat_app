@@ -67,6 +67,12 @@
         {
            io.to(data.socketid).emit('who_is_typing',data)
         })
+        //disconnect logic
+        socket.on('disconnect', function () {
+            console.log("m disconnected bro")
+            io.sockets.emit('connected_user')
+      
+        });
 
     })
 
