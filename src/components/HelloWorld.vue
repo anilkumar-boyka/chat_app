@@ -308,6 +308,7 @@ ul {
     font-family: 'Gotu', sans-serif;
     font-size: 20px;
     font-weight: bold;
+    cursor : pointer;
   }
  /* .dropbtn:hover {
    background-color: #3e8e41;

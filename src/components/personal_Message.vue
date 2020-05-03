@@ -18,9 +18,9 @@
             <span class="dropbtn"><i v-if="show_name_list" class="fas fa-caret-down fa-2x	"></i>
               <span class="dropdown-content">
                 <ul>
-                  <li v-for="online_user in online_users" v-if="online_user.name!=name">
-                    <b-button  v-on:click="send_personal_msg($event,online_user.socket_id)" class="nameList">
-                      <span :class={onlineUser:isTrue}>{{online_user.name}}</span>
+                  <li v-for="(online_user,index) in online_users" v-if="online_user.name!=name">
+                    <b-button  v-on:click="send_personal_msg($event,online_user.socket_id,index)" class="nameList">
+                      <span :class={onlineUser:isTrue[index]}>{{online_user.name}}</span>
                       <!-- <span>{{online_user.socket_id}}</span> -->
                     </b-button>
                   </li>
@@ -100,7 +100,7 @@ export default {
       current_socketid : '',
       show_name_list : 0,
       current_personal_msg_user : '',
-      isTrue : 0,
+      isTrue : [],
       clicked_Socketid : '',
       personal_msgs_recieved :[]
     }
@@ -242,12 +242,12 @@ export default {
             socketid : this.clicked_Socketid
             })
         },
-        send_personal_msg : function (event,Socketid) {
+        send_personal_msg : function (event,Socketid,index) {
           this.clicked_Socketid = Socketid;
-          this.isTrue = 1;
+          // this.isTrue = 1;
           console.log(event)
           console.log("socket id is"+this.clicked_Socketid)
-
+          // alert("rcvd index is"+index)
           // console.log(event.srcElement.innerText)
           // var skt = JSON.parse(event.srcElement.innerText)
           // console.log(skt.socket_id)
@@ -258,6 +258,17 @@ export default {
           this.$socket.emit('join', {
             username:Socketid ,
           })
+          this.isTrue =[];
+          console.log("total online users....")
+          console.log(this.online_users.length)
+          console.log('index is...')
+          console.log(this.isTrue)
+          for(var i=0;i<this.online_users.length;i++)
+            this.isTrue.push(0)
+          // this.isTrue[index].push(1)
+          console.log(this.isTrue)
+          this.isTrue.splice(index,1,1)
+          console.log(this.isTrue)
         },
     }
 }
